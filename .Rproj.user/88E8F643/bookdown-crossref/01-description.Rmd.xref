@@ -1,0 +1,17 @@
+h1:description Description
+h2:définition Définition
+h2:notation Notation
+h2:exemple Exemple
+h2:structure-ou-caracteristiques Structure ou caracteristiques
+h2:statistiques-descriptives-usuelles Statistiques descriptives usuelles
+h3:les-statistiques-des-positions Les statistiques des positions
+h3:les-statistiques-de-dispersion Les statistiques de dispersion
+h3:les-statistiques-des-formes Les statistiques des formes
+h2:performances-dune-série-temporelle Performances d’une série temporelle
+h2:description-graphique Description graphique
+h3:le-chronogramme-time-plot Le chronogramme (time plot)
+h3:lhistogramme L’histogramme
+h3:le-diagramme-retardé-lagplot Le diagramme retardé (lagplot)
+h3:le-boxplot Le boxplot
+h3:le-month-plot Le month plot
+

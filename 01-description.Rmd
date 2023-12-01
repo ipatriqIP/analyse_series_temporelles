@@ -1,0 +1,108 @@
+# Description 
+
+All chapters start with a first-level heading followed by your chapter title, like the line above. There should be only one first-level heading (`#`) per .Rmd file.
+
+## Définition
+
+On appelle par série temporelle, une suite ordonnée des valeurs numériques représentant l’évolution d'un phénomène spécifique au cours du temps. On l'appelle aussi série chronologique. Mathématiquement, on parle d'une suite des données indexée par le temps.
+
+
+## Notation
+
+On note une série temporelle par :
+$$\left\{x_t \right\}_{t \in T}$$
+Où :
+
+* $t_1, t_2, ..., t_n$ sont les $n$ instants d'observation du phénomène,
+
+* $T$ est l'ensemble ordonné des instants, i.e : $T = \left\{t_1, t_2, ..., t_n \right\}$,
+
+* $x_{t_i}$ est la valeur du phénomène observé à l'instant $t_i$, avec $1 \le i \le n$,
+
+
+On peut aussi la noter par l'ensemble des couples ci-après :
+$$(t_i, x_i)_{1 \le i \le n}$$
+Où :
+
+* la première composante l'instant d'observation $t_i$,
+* la deuxième composante est la valeur du phénomène $x$ observée à l’instant $t_i$.
+
+
+
+## Exemple
+
+* Le nombre de clients ayant réalisé un appel vocal sortant vers un autre client (Fig. 1.1),
+* Le nombre de minutes consommées par l’ensemble des clients ayant passé un appel vocal (Fig. 1.2)
+* Le revenu généré par l'ensemble des clients ayant passer au moins un appel vocal (Fig. 1.3),
+* Le nombre de nouveaux clients recruter par un operateur de téléphonie mobile au cours ... (Fig. 1.4),
+* Le nombre de clients ayant résilié leur contrat d'abonnement chez un operateur mobile (Fig. 1.5),
+
+
+
+## Structure ou caracteristiques
+
+Une série temporelle est caractérisée par :
+
+* La tendance
+
+* La saisonnalité 
+
+* Le bruit
+
+
+
+## Statistiques descriptives usuelles
+
+### Les statistiques des positions
+
+* La moyenne, 
+
+* La mediane
+
+
+### Les statistiques de dispersion
+
+* La variance
+
+* L'ecart type
+
+
+### Les statistiques des formes
+
+* Les coefficients d'aplatissement
+
+* Le coefficients d'asymétrie 
+
+
+
+## Performances d’une série temporelle
+
+* La performance Year-to-date
+
+* La performance Month-to-date
+
+* La performance Quater-to-date
+
+* La performance Week-to-date
+
+
+## Description graphique
+
+### Le chronogramme (time plot)
+
+
+### L'histogramme
+
+
+### Le diagramme retardé (lagplot)
+
+
+### Le boxplot
+
+
+### Le month plot
+
+
+
+
+
