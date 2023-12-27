@@ -1,38 +1,89 @@
 # Modélisation {#cross}
 
-Cross-references make it easier for your readers to find and link to elements in your book.
+
+## Stationnarité
+
+### Definition 2.1.
+
+xxxx
+
+
+### Graph
+
+La série est‐elle stationnaire?
+
+```{r}
+
+plot(s1, xlab = "temps", ylab = "valeur", col = "blue", 
+     main = "Evolution de l'indice du coût de la construction")
+abline(h = mean(s1), col = "red", lty = 2)
+
+```
+
+On voit clairement sur le chronogramme de la série qu'elle ne pourrait pas être stationnaire : sa moyenne depend de l'instant auquel on se trouve et le niveau de la série ne fluctue pas autour d'une valeur quelconque.
+
+
+
+### Test de 
+
+Test de stationnarité
+
+```{r}
+
+library(aTSA)
+adf.test(s1)
+adf.test(s2)
+adf.test(s3)
+adf.test(s4)
+
+```
+
+Au seul de 5%, on observe par le résultat du test de Dickey-Fuller augmenté que cette série n'est pas stationnaire.
+
+
+
+```{r}
+
+library(caschrono)
+library(zoo)
+
+acf(m1$random, na.action = na.pass)
+Box.test.2(m1$random, nlag = c(3, 6, 9, 12), type = "Ljung-Box", decim = 4)
+
+```
+
+Du résultat ci-dessus, la p-value > 0,05 indiquant que la distribution des données n’est pas significativement différente de la distribution normale. En d’autres termes, nous pouvons supposer que la normalité.
+
+
+fonction d’auto-corrélation
+
+```{r}
+
+par(mfrow = c(2,2), oma = c(0, 0, 0, 0), mar = c(2.5, 2.5, 2,2), cex.main = 0.8, cex.lab = 0.7, cex.axis = 0.7)
+acf(s1, lag.max = 20)
+acf(s2, lag.max = 20)
+acf(s3, lag.max = 20)
+acf(s4, lag.max = 20)
+
+```
+
+
+
+```{r}
+
+par(mfrow = c(2,2), oma = c(0, 0, 0, 0), mar = c(2.5, 2.5, 2,2), cex.main = 0.8, cex.lab = 0.7, cex.axis = 0.7)
+pacf(s1, lag.max = 20)
+pacf(s2, lag.max = 20)
+pacf(s3, lag.max = 20)
+pacf(s4, lag.max = 20)
+
+```
+
+
 
 ## Modèle sans variable explicative
 
-There are two steps to cross-reference any heading:
 
-1. Label the heading: `# Hello world {#nice-label}`. 
-    - Leave the label off if you like the automated heading generated based on your heading title: for example, `# Hello world` = `# Hello world {#hello-world}`.
-    - To label an un-numbered heading, use: `# Hello world {-#nice-label}` or `{# Hello world .unnumbered}`.
-
-1. Next, reference the labeled heading anywhere in the text using `\@ref(nice-label)`; for example, please see Chapter \@ref(cross). 
-    - If you prefer text as the link instead of a numbered reference use: [any text you want can go here](#cross).
-
-
-## Modèle avec variables explicatives
-
-Figures and tables *with captions* can also be cross-referenced from elsewhere in your book using `\@ref(fig:chunk-label)` and `\@ref(tab:chunk-label)`, respectively.
-
-See Figure \@ref(fig:nice-fig).
-
-```{r nice-fig, fig.cap='Here is a nice figure!', out.width='80%', fig.asp=.75, fig.align='center', fig.alt='Plot with connected points showing that vapor pressure of mercury increases exponentially as temperature increases.'}
-par(mar = c(4, 4, .1, .1))
-plot(pressure, type = 'b', pch = 19)
-```
-
-Don't miss Table \@ref(tab:nice-tab).
-
-```{r nice-tab, tidy=FALSE}
-knitr::kable(
-  head(pressure, 10), caption = 'Here is a nice table!',
-  booktabs = TRUE
-)
-```
 
 
 ## Modèle statique

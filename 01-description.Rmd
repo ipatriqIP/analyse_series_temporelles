@@ -2,9 +2,11 @@
 
 All chapters start with a first-level heading followed by your chapter title, like the line above. There should be only one first-level heading (`#`) per .Rmd file.
 
-## Définition
+## Définitions
 
-On appelle par série temporelle, une suite ordonnée des valeurs numériques représentant l’évolution d'un phénomène spécifique au cours du temps. On l'appelle aussi série chronologique. Mathématiquement, on parle d'une suite des données indexée par le temps.
+### Définition 1 : Série temporelle
+
+On appelle par série temporelle, une suite ordonnée des valeurs numériques décrivant l’évolution d'un phénomène spécifique au cours du temps. On l'appelle aussi série chronologique. Mathématiquement, on parle d'une suite finie des données indexée par le temps.
 
 
 ## Notation
@@ -13,7 +15,7 @@ On note une série temporelle par :
 $$\left\{x_t \right\}_{t \in T}$$
 Où :
 
-* $t_1, t_2, ..., t_n$ sont les $n$ instants d'observation du phénomène,
+* $t_1, t_2, ..., t_n$ sont les $n$ instants d'observation du phénomène, ca peut etre le jour, le mois, l’année ... 
 
 * $T$ est l'ensemble ordonné des instants, i.e : $T = \left\{t_1, t_2, ..., t_n \right\}$,
 
@@ -27,82 +29,528 @@ Où :
 * la première composante l'instant d'observation $t_i$,
 * la deuxième composante est la valeur du phénomène $x$ observée à l’instant $t_i$.
 
+ou encore $x_t$.
+
+
+La serie $x_t$ est la realisation d'un processus aléatoire $X_t$. Les $X_t$ sont des variables aléatoires (v.a), et $x_t$ est la valeur prise par $X_t$ à l'instant $t$. Ces v.a à des instants differents sont normalement corrélées. 
+
+
+### Définition 2 : Le bruit blanc
+
+Un bruit blanc est une suite $z_t$ de v.a. non corrélées de moyenne nulle et de variance constante. Elle est considérée comme la série de reference.
+
+On note $z_t \sim BB(0, \sigma_z^2)$ pour designer un bruit blanc.
+
 
 
 ## Exemple
 
-* Le nombre de clients ayant réalisé un appel vocal sortant vers un autre client (Fig. 1.1),
-* Le nombre de minutes consommées par l’ensemble des clients ayant passé un appel vocal (Fig. 1.2)
-* Le revenu généré par l'ensemble des clients ayant passer au moins un appel vocal (Fig. 1.3),
-* Le nombre de nouveaux clients recruter par un operateur de téléphonie mobile au cours ... (Fig. 1.4),
-* Le nombre de clients ayant résilié leur contrat d'abonnement chez un operateur mobile (Fig. 1.5),
+* Le chiffre d'affaire mensuel (en million de dollars) du service Voix mobile en République Démocratique du Congo pour l'ensemble des opérateurs de téléphonie (Fig. 1.1). La croissance de l’activité a brusquement changé suite à l'inflation du marché.
+
+* Le nombre de minutes consommées[^n1] par jour en 2021 par l’ensemble des clients ayant passé un appel vocal (Fig. 1.2). La consommation baisse les jours week-ends, suite du fait de l’arrêt des activités économiques.
+
+* Le nombre de Terabyte consommé par l'ensemble des clients ayant naviguer sur internet (Fig. 1.3). La croissance est exponentielle, favorisée plus par l’augmentation d'une part du nombre des smartphones et de la baisse du prix de service internet mobile sur le marché congolais.
+
+* Le nombre de clients actifs sur une periode de 90 jours de l'operateur Airtel (Fig. 1.4).
+
+* On simule une marche aléatoire avec les fonctions R *cumsum()* et *rnorm()* (Fig. 1.6). 
 
 
+```{r exemple, echo=FALSE, message=FALSE}
 
-## Structure ou caracteristiques
+# Chargement des packages
+library(iperform)
+library(ggplot2)
 
-Une série temporelle est caractérisée par :
+# Chargement des données 
+data("service_mobile")
+data("voix_mobile")
+data("operateur_mobile")
 
-* La tendance
+# Les vecteurs des données 
+x1 <- service_mobile[service_mobile$Service == "Voix", "Revenu"]/1000000
+x2 <- voix_mobile[voix_mobile$date >= "2021-04-01" & voix_mobile$date <= "2021-11-30", "Usage"]
+x3 <- service_mobile[service_mobile$Service == "Internet" & service_mobile$date >= "2016-01-31", "Usage"]/(1024^2)
+x4 <- operateur_mobile[operateur_mobile$Service == "Global" & operateur_mobile$Operateur == "Airtel", "Parc"]/1000000
 
-* La saisonnalité 
+set.seed(1986)
+x6 <- cumsum(rnorm(240, 0, 1))
 
-* Le bruit
+# Creation des séries temporelles 
+s1 <- ts(data = x1, start = c(2013, 1), frequency = 12)
+s2 <- ts(data = x2, start = c(2021, 4), frequency = 365.25)
+s3 <- ts(data = x3, start = c(2013, 1), frequency = 12)
+s4 <- ts(data = x4, start = c(2013, 1), frequency = 12)
+s6 <- ts(data = x6, start = c(2012, 1), frequency = 12)
+
+# Graphiques des séries 
+par(mfrow = c(2,2), oma = c(0, 0, 0, 0), mar = c(2.5, 2.5, 2,2), cex.main = 0.8, cex.lab = 0.7, cex.axis = 0.7)
+plot(s1, col = "royalblue", xlab = "million USD", main = "s1 : CA Voix mobile (en USD)")
+plot(s2, col = "violetred1", xlab = "", main = "s2 : Minutes consommées")
+plot(s3, col = "red", xlab = "", main = "s3 : Bigabyte consommés")
+plot(s4, col = "green3", xlab = "", main = "s4 : Nombre d’abonnés Airtel")
+
+```
+
+
+```{r}
+
+par(mfrow = c(2,2), oma = c(0, 0, 0, 0), mar = c(2.5, 2.5, 2,2), cex.main = 0.8, cex.lab = 0.7, cex.axis = 0.7)
+plot(s4, col = "green3", xlab = "", main = "s4 : Nombre d’abonnés Airtel")
+plot(s6, col = "grey", xlab = "", main = "s6 : Marche aléatoire")
+
+```
+
 
 
 
 ## Statistiques descriptives usuelles
 
-### Les statistiques des positions
+Soit $x_t$ une série temporelle avec $t \in T$,
 
-* La moyenne, 
+### Les statistiques de tendance centrale
 
-* La mediane
+* La moyenne empirique 
+
+La moyenne empirique de la série est donnée par :
+$$\overline{x} = \frac{1}{n} \sum_{t=1}^{n} x_{t}$$
 
 
 ### Les statistiques de dispersion
 
-* La variance
+* La variance empirique 
 
-* L'ecart type
+La variance empirique est donnée par :
+$$\sigma^2 = \frac{1}{n} \sum_{t=1}^{n} (x_t - \overline{x})^2 $$
+
+L'ecart-type est definit par la racine carrée de la variance empirique : $\sigma$.
+
+
+* Le coefficient de variation
+
+Le coefficient de variation est donné par :
+$$cv = \frac{\sigma}{\overline{x}}$$
+Permet de determiner l’homogénéité ou la dispersion et est exprimé en pourcentage. 
+
+- Pour $cv<15%$, on dit que la série est homogène. 
+- Pour $cv>15%$, on dit que les valeurs de la série sont relativement dispersées. 
+
+```{r}
+
+round(sd(s1)/mean(s1)*100, 2)
+round(sd(s2)/mean(s2)*100, 2)
+round(sd(s3)/mean(s3)*100, 2)
+round(sd(s4)/mean(s4)*100, 2)
+
+```
+
+Ainsi, on peut observer qu'il y a de forte dispersion avec la $s3$ et $s4$ contrairement aux observations de série $s1$ et $s2$ qui elles sont homogènes. 
+
+
+### Statistiques de dépendance 
+
+Celles qui renseignent sur la dépendance entre les observations de la série $x_t$ :
+
+* L'auto_covariance
+
+L'auto-covariance d'ordre $h$ de la série est donnée par :
+$$\hat\sigma(h) = \frac{1}{n-h} \sum_{t=1}^{n-h} (x_{t} - \overline{x}) (x_{t+h} - \overline{x})$$
+
+Avec $h \in N^*$ et $h < n$. Dans le cas où $h=0$, c’est-à-dire $\hat\sigma(0)$, on a la variance empirique $\sigma^2$.
+
+
+* L'auto-correlation
+
+L'auto-correlation de la série est donnée par :
+$$\hat\gamma(h) = \frac{\hat\sigma(h)}{\hat\sigma(0)}$$
+
+
 
 
 ### Les statistiques des formes
 
+La loi normale se caractérise par un coefficient d'asymétrie et un coefficient d'aplatissement nuls. Ainsi les calculs de ces coefficients peuvent nous aider à avoir une idée sur la normalité.
+
 * Les coefficients d'aplatissement
+
+Le coefficient d'aplatissemnt (ou Kurtosis) permet de mesurer l'aplatissement de la distribution de la série. On s'en sert aussi pour vérifier si une distribution est normale. Le coefficient est donné par :
+$$P = \frac{n(n+1)}{(n-1)(n-2)(n-3)} \sum_{t=1}^n \left( \frac{x_t - \overline{x}}{\sigma} \right)^4 - \frac{3(n-1)^2}{(n-2)(n-3)} $$
+
+ou 
+$$K = \frac{1}{n\sigma^4} \sum_{t=1}^n (x_t - \overline{x})^4 $$
+
+Pour :
+- Si $K=3$, la distribution est normale,
+- Si $K>3$, la distribution est plus applatie, c’est-à-dire, une distribution relativement hétérogène, avec beaucoup de valeurs éloignées de la moyenne.
+- Si $K<3$, la distribution est moins applatie, c’est-à-dire, il y a peu de variations dans les valeurs observées, une distribution relativement homogène, avec beaucoup de valeurs égales ou proches de la moyenne.
+
+```{r}
+
+library(moments)
+kurtosis(s1)
+kurtosis(s2)
+kurtosis(s3)
+kurtosis(s4)
+kurtosis(s6)
+
+```
+
 
 * Le coefficients d'asymétrie 
 
+Le coefficient d’asymetrie (de Fisher) est donner par :
+$$A = \frac{n}{(n-1)(n-2)} \sum_{t=1}^n \left( \frac{x_t - \overline{x}}{\sigma} \right) ^3$$
+
+ou 
+$$F = \frac{1}{n\sigma^3} \sum_{t=1}^n (x_t - \mu)^3$$
 
 
-## Performances d’une série temporelle
 
-* La performance Year-to-date
+L’interprétation de ces coefficients est directe :
 
-* La performance Month-to-date
-
-* La performance Quater-to-date
-
-* La performance Week-to-date
+- Si le coefficient est nul, la distribution est symétrique
+- Si le coefficient est négatif, la distribution est déformée à gauche de la médiane (sur-représentation de valeurs faibles, à gauche)
+- Si le coefficient est positif, la distribution est déformée à droite de la médiane (sur-représentation de valeurs fortes, à droite)
 
 
-## Description graphique
 
-### Le chronogramme (time plot)
+```{r}
+
+skewness(s1)
+skewness(s2)
+skewness(s3)
+skewness(s4)
+skewness(s6)
+
+```
+
+
+## Représentation graphique
+
+### Le chronogramme
+
+Le chronogramme (ou time plot) est la représentation graphique d'une série temporelle. Les figures de l'exemple sont des chronogrammes. Sous R on peut utiliser d'autres paramètres pour ajouter les éléments dans les différentes figures.
 
 
 ### L'histogramme
 
+La représentation qui permet d'avoir une idée sur la distribution des valeurs de la série $x_t$.
 
-### Le diagramme retardé (lagplot)
+```{r, echo=FALSE, message=FALSE}
+
+par(mfrow = c(2,2), oma = c(0, 0, 0, 0), mar = c(2.5, 2.5, 2,2), cex.main = 0.8, cex.lab = 0.7, cex.axis = 0.7)
+hist(s1, breaks = 20, 
+     main = "Histogramme", 
+     ylab = "Effectif", 
+     xlab = "Consommation Internet", 
+     col = "royalblue")
+hist(s2, breaks = 20, 
+     main = "Histogramme", 
+     ylab = "Effectif", 
+     xlab = "Consommation Internet", 
+     col = "violetred1")
+hist(s3, breaks = 20, 
+     main = "Histogramme", 
+     ylab = "Effectif", 
+     xlab = "Consommation Internet", 
+     col = "red")
+hist(s4, breaks = 20, 
+     min = "Histogramme", 
+     ylab = "Effectif", 
+     xlab = "xxxx", 
+     col = "green3")
+
+```
 
 
-### Le boxplot
+
+### Le diagramme retardé
+
+Le diagramme retardé (ou Lagplot) est une représentation qui permet de comprendre la dépendance des observations de la série $x_t$ obtenu avec la fonction *lagplot()*.
+
+```{r}
+
+lag.plot(s1, 4, do.lines = FALSE)
+lag.plot(s2, 4, do.lines = FALSE)
+lag.plot(s3, 4, do.lines = FALSE)
+lag.plot(s4, 4, do.lines = FALSE)
+
+```
+
+
+
+### La boîte à moustache
+
+La boîte à moustache (ou boxplot) est une représentation qui permet de repérer les valeurs atypiques de la série $x_t$. Elle permet aussi d'avoir une idée sur la symetrie de la distribution quoique cette symetrie n'affirme pas la normalité. La boite est symetrique lorsque la mediane se situe au milieu de la boîte à moustache et qu'il y a symetrie des moustaches. 
+
+```{r, echo=FALSE, message=FALSE}
+
+par(mfrow = c(2,2), oma = c(0, 0, 0, 0), mar = c(2.5, 2.5, 2,2), cex.main = 0.8, cex.lab = 0.7, cex.axis = 0.7)
+boxplot(s1, ylab = "CA Voix mobile", col = "royalblue")
+boxplot(s2, ylab = "Nombre de passager", col = "violetred1")
+boxplot(s3, ylab = "Consommation internet", col = "red")
+boxplot(s4, ylab = "Nombre de passager", col = "green3")
+
+```
+
 
 
 ### Le month plot
 
 
+```{r}
+
+par(mfrow = c(2,2), oma = c(0, 0, 0, 0), mar = c(2.5, 2.5, 2,2), cex.main = 0.8, cex.lab = 0.7, cex.axis = 0.7)
+monthplot(s1)
+monthplot(s2)
+monthplot(s3)
+monthplot(s4)
+
+```
 
 
 
+
+
+
+## Structure ou caracteristiques
+
+Une série temporelle $x_t$ est caractérisée par une tendance, une saisonnalité et résidus.
+
+### La tendance
+
+Une tendance (ou trend) est l'orientation à la hausse ou à la baisse des valeurs observées d'une série temporelle sur une periode assez longue. On note par $m_t$. Une tendance est soit :
+
+* locale ou globale :
+* linéaire ou non linéaire :
+
+
+### La saisonnalité 
+
+La saisonnalité permet de détecter les éléments repetitifs sur les observations d'une série après une période. La répétition peut etre mensuelle ou hebdomadaire. On note par $s_t$ la composante saisonnière d'une série.  
+
+### Erreur (Le bruit)
+
+
+Les 3 composants ci-dessus permet de decomposer la série $x_t$ à un modèle additif :
+$$x_t = m_t+s_t+u_t$$
+
+avec $E(u_t)=0$, ou soit à un modèle multiplicatif :
+
+$$x_t = m_ts_tu_t$$
+
+avec $E(u_t)=1$.
+
+Avec le logiciel R, on peut décomposer la série avec la fonction *decompose()*.
+
+Pour la série $s1$ on a :
+
+```{r}
+
+m1 = decompose(s1, type = "additive")
+
+par(mfrow = c(2,2), oma = c(0, 0, 0, 0), mar = c(2.5, 2.5, 2,2), cex.main = 0.8, cex.lab = 0.7, cex.axis = 0.7)
+plot(m1$seasonal, col = "blue", ylab = "Saisonnalité")
+plot(m1$trend, col = "orange", ylab = "Tendance")
+plot(m1$random, col = "red", ylab = "Random")
+plot(m1$x, col = "black", ylab = "Valeur")
+
+```
+
+
+
+Pour la série $s3$ on a :
+
+```{r}
+
+m3 = decompose(s3, type = "multiplicative")
+
+par(mfrow = c(2,2), oma = c(0, 0, 0, 0), mar = c(2.5, 2.5, 2,2), cex.main = 0.8, cex.lab = 0.7, cex.axis = 0.7)
+plot(m3$seasonal, col = "blue", ylab = "Saisonnalité")
+plot(m3$trend, col = "orange", ylab = "Tendance")
+plot(m3$random, col = "red", ylab = "Random")
+plot(m3$x, col = "black", ylab = "Valeur")
+
+```
+
+
+Pour la série $s4$ on a :
+
+```{r}
+
+m4 = decompose(s4, type = "additive")
+
+par(mfrow = c(2,2), oma = c(0, 0, 0, 0), mar = c(2.5, 2.5, 2,2), cex.main = 0.8, cex.lab = 0.7, cex.axis = 0.7)
+plot(m4$seasonal, col = "blue", ylab = "Saisonnalité")
+plot(m4$trend, col = "orange", ylab = "Tendance")
+plot(m4$random, col = "red", ylab = "Random")
+plot(m4$x, col = "black", ylab = "Valeur")
+
+```
+
+
+## Etude de la normalité
+
+
+### Le diagramme Quantile-Quantile
+
+Le diagramme Quantile-Quantile (ou QQ-Plot) est une représentation d'évaluer la pertinence de l'ajustement d'une distribution donnée à un modèle théorique. De ce fait, elle permet aussi de reconnaître un bruit blanc.
+
+Plus les points se rapprochent de la droite, plus la distribution empirique est dite normale.
+
+```{r, echo = FALSE}
+
+#par(mfrow = c(2, 2))
+par(mfrow = c(2,2), oma = c(0, 0, 0, 0), mar = c(2.5, 2.5, 2,2), cex.main = 0.8, cex.lab = 0.7, cex.axis = 0.7)
+qqnorm(s1)
+qqline(s1, col = "red")
+
+qqnorm(s2)
+qqline(s2, col = "red")
+
+qqnorm(s3)
+qqline(s3, col = "red")
+
+qqnorm(s4)
+qqline(s4, col = "red")
+
+```
+
+Interprétation :
+
+
+
+```{r}
+
+par(mfrow = c(2,2), oma = c(0, 0, 0, 0), mar = c(2.5, 2.5, 2,2), cex.main = 0.8, cex.lab = 0.7, cex.axis = 0.7)
+
+qqnorm(s4)
+qqline(s4, col = "red")
+
+qqnorm(s6)
+qqline(s6, col = "red")
+
+```
+
+
+### Test de normalité
+
+#### Test de Shapiro-Wilk
+
+Il est appliquable pour des échantillons allant jusqu'à 50 valeurs.
+
+```{r}
+
+shapiro.test(s1)
+shapiro.test(s2)
+shapiro.test(s3)
+shapiro.test(s4)
+shapiro.test(s6)
+
+```
+
+A $n=30$ *(ddl)*, $W_{0.05}$ vaut $0.927$. On a ce qui suit :
+
+* Pour $s1$, $W_{obs} > W_{0,05}$, avec le *p-value* est superieur à $0.05$, l'hypothèse de normalité est donc tolérée. C’est-à-dire les données suivent une distribution normale.
+
+* Pour $s2$, $W_{obs} > W_{0,05}$, avec le *p-value* est inférieur à $0.05$, .....
+
+* Pour $s3$ et $s4$, $W_{obs} < W_{0,05}$, avec les *p-value* toutes inférieures à $0.05$, l'hypothse de normalité est donc rejetée. C’est-à-dire les données ne suivent pas une distribution normale.
+
+
+
+#### Test de Kolmogorov-Smirnov
+
+Le test de Kolmogorov-Smirnov permet de tester l'ajustement des données x à n'importe quelle loi, dont la loi normale. Il est intéressant d'opter pour ce test plutôt que celui de Shapiro-Wilk en cas de très grands échantillons.
+
+```{r, message=FALSE}
+
+# Test de normalité de Kolmogorov S.
+ks.test(s1, y = "pnorm", mean(s1), sd(s1))
+ks.test(s2, y = "pnorm", mean(s2), sd(s2))
+ks.test(s3, y = "pnorm", mean(s3), sd(s3))
+ks.test(s4, y = "pnorm", mean(s4), sd(s4))
+ks.test(s6, y = "pnorm", mean(s6), sd(s6))
+
+```
+
+Pour $D_{0.05} = 0.240$, (pour n = 30) :
+
+* Si $D_{max} < D_{0.05}$, l'$H_0$ est tolérée: la distribution empirique semble correspondre à une distribution normale.
+* Si $D_{max} > D_{0.05}$, l'$H_0$ est rejetée: la distribution empirique ne provient pas d'une distribution normale.
+
+Ainsi, avec ce test, on tolère l’hypothèse $H_0$, les distributions des séries semblent correspondre à une distribution normale.
+
+
+
+```{r}
+
+# Test de normalité
+library(tseries)
+
+jarque.bera.test(s1)
+jarque.bera.test(s2)
+jarque.bera.test(s3)
+jarque.bera.test(s4)
+jarque.bera.test(s6)
+
+```
+
+
+
+## Test d’indépendance
+
+On peut utiliser la fonction *Box.test()* pour examiner l'hypothèse nulle d'indépendance dans une série temporelle donnée.
+
+```{r}
+
+Box.test(s1, lag = 1, type = "Ljung-Box")
+Box.test(s1, lag = 2, type = "Ljung-Box")
+Box.test(s1, lag = 3, type = "Ljung-Box")
+
+```
+
+
+
+
+
+## Performances d’une série temporelle
+
+Dans les domaines de finance, de comptabilité ou de marketing opérationnel, les experts suivent au quotidien l'évolution de leurs activités en comparant à chaque fois les résultats d'une date (ou d'une période) par rapport à une date (ou une période) antérieure, par rapport aux résultats du marché global ou par rapport aux résultats de leurs concurrents directs. On parle là de concept de *performance*.
+
+### La performance Year-to-date
+
+La performance *Year-To-Date* conrespond au résultat cumulé commençant le premier jour de l’année civile ou de l'exercice en cours jusqu’à la date actuelle,
+$$YTD_x = \sum_{t=1}^{k} x_{t}$$
+
+$x_1$ correspond à la valeur de la série au 1er janvier, et $x_k$ à la valeur de la série à la date actuelle.
+
+
+### La performance Month-to-date
+
+La performance *Month-To-Date* conrespond au résultat cumulé commençant le premier jour du mois en cours jusqu’à la date actuelle au cours du même mois,
+$$MTD_x = \sum_{t=1}^{k} x_{t}$$
+
+$x_1$ correspond à la valeur de la série au 1er jour du mois, et $x_k$ à la valeur de la série à la date actuelle au cours du même mois.
+
+
+### La performance Quater-to-date
+
+La performance *Quater-To-Date* conrespond au résultat cumulé commençant le permier jour du trimestre jusqu’à la date actuelle au cours du même trimestre.
+$$QTD_x = \sum_{t=1}^{k} x_{t}$$
+
+$x_1$ correspond à la valeur de la série au 1er jour du trimestre, et $x_k$ à la valeur de la série à la date actuelle au cours du même trimestre.
+
+
+### La performance Week-to-date
+
+La performance *Week-To-Date* conrespond au résultat cumulé commençant le permier jour de la semaine jusqu’à la date actuelle au cours de la même semaine.
+$$WTD_x = \sum_{t=1}^{k} x_{t}$$
+
+$x_1$ correspond à la valeur de la série au 1er jour de la semaine, et $x_k$ à la valeur de la série à la date actuelle au cours de la même semaine.
+
+
+
+
+
+[^n1]: Données simulées

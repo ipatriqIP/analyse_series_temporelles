@@ -120,7 +120,7 @@
 
 \title{Analyse des séries temporelles avec R}
 \author{Patrick Ilunga}
-\date{2023-12-01}
+\date{2023-12-27}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -160,55 +160,32 @@ Use second-level and higher headings within chapters like: \texttt{\#\#\ A\ shor
 
 The \texttt{index.Rmd} file is required, and is also your first book chapter. It will be the homepage when you render the book.
 
-\hypertarget{render-book}{%
-\section{Render book}\label{render-book}}
+\hypertarget{objectif-de-lanalyse-dune-suxe9rie-temporelle}{%
+\section{Objectif de l'analyse d'une série temporelle}\label{objectif-de-lanalyse-dune-suxe9rie-temporelle}}
 
-You can render the HTML version of this example book without changing anything:
+Quoique l'on dit, le but ultime d'analyse d'une série temporelle est d'arriver à comprendre son passé et son present pour prédire son futur. Ceci passe par la description et la modélisation de la série.
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
+\begin{itemize}
 \item
-  Find the \textbf{Build} pane in the RStudio IDE, and
+  Décrire la série :
 \item
-  Click on \textbf{Build Book}, then select your output format, or select ``All formats'' if you'd like to use multiple formats from the same book source files.
-\end{enumerate}
-
-Or build the book from the R console:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{bookdown}\SpecialCharTok{::}\FunctionTok{render\_book}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
-
-To render this example to PDF as a \texttt{bookdown::pdf\_book}, you'll need to install XeLaTeX. You are recommended to install TinyTeX (which includes XeLaTeX): \url{https://yihui.org/tinytex/}.
-
-\hypertarget{preview-book}{%
-\section{Preview book}\label{preview-book}}
-
-As you work, you may start a local server to live preview this HTML book. This preview will update as you edit the book when you save individual .Rmd files. You can start the server in a work session by using the RStudio add-in ``Preview book'', or from the R console:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{bookdown}\SpecialCharTok{::}\FunctionTok{serve\_book}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
+  Modéliser la série :
+\item
+  Prédire les valeurs futures :
+\end{itemize}
 
 \hypertarget{description}{%
 \chapter{Description}\label{description}}
 
 All chapters start with a first-level heading followed by your chapter title, like the line above. There should be only one first-level heading (\texttt{\#}) per .Rmd file.
 
-\hypertarget{duxe9finition}{%
-\section{Définition}\label{duxe9finition}}
+\hypertarget{duxe9finitions}{%
+\section{Définitions}\label{duxe9finitions}}
 
-On appelle par série temporelle, une suite ordonnée des valeurs numériques représentant l'évolution d'un phénomène spécifique au cours du temps. Mathématiquement, on parle d'une suite des données indexée par le temps.
+\hypertarget{duxe9finition-1-suxe9rie-temporelle}{%
+\subsection{Définition 1 : Série temporelle}\label{duxe9finition-1-suxe9rie-temporelle}}
 
-\hypertarget{an-unnumbered-section}{%
-\subsection*{An unnumbered section}\label{an-unnumbered-section}}
-\addcontentsline{toc}{subsection}{An unnumbered section}
-
-Chapters and sections are numbered by default. To un-number a heading, add a \texttt{\{.unnumbered\}} or the shorter \texttt{\{-\}} at the end of the heading, like in this section.
+On appelle par série temporelle, une suite ordonnée des valeurs numériques décrivant l'évolution d'un phénomène spécifique au cours du temps. On l'appelle aussi série chronologique. Mathématiquement, on parle d'une suite finie des données indexée par le temps.
 
 \hypertarget{notation}{%
 \section{Notation}\label{notation}}
@@ -219,7 +196,7 @@ Où :
 
 \begin{itemize}
 \item
-  \(t_1, t_2, ..., t_n\) sont les \(n\) instants d'observation du phénomène,
+  \(t_1, t_2, ..., t_n\) sont les \(n\) instants d'observation du phénomène, ca peut etre le jour, le mois, l'année \ldots{}
 \item
   \(T\) est l'ensemble ordonné des instants, i.e : \(T = \left\{t_1, t_2, ..., t_n \right\}\),
 \item
@@ -238,177 +215,1181 @@ Où :
   la deuxième composante est la valeur du phénomène \(x\) observée à l'instant \(t_i\).
 \end{itemize}
 
+ou encore \(x_t\).
+
+La serie \(x_t\) est la realisation d'un processus aléatoire \(X_t\). Les \(X_t\) sont des variables aléatoires (v.a), et \(x_t\) est la valeur prise par \(X_t\) à l'instant \(t\). Ces v.a à des instants differents sont normalement corrélées.
+
+\hypertarget{duxe9finition-2-le-bruit-blanc}{%
+\subsection{Définition 2 : Le bruit blanc}\label{duxe9finition-2-le-bruit-blanc}}
+
+Un bruit blanc est une suite \(z_t\) de v.a. non corrélées de moyenne nulle et de variance constante. Elle est considérée comme la série de reference.
+
+On note \(z_t \sim BB(0, \sigma_z^2)\) pour designer un bruit blanc.
+
 \hypertarget{exemple}{%
 \section{Exemple}\label{exemple}}
 
-\hypertarget{structure-ou-caracteristiques}{%
-\section{Structure ou caracteristiques}\label{structure-ou-caracteristiques}}
-
-Une série temporelle est caractérisée par :
-
 \begin{itemize}
 \item
-  La tendance
+  Le chiffre d'affaire mensuel (en million de dollars) du service Voix mobile en République Démocratique du Congo pour l'ensemble des opérateurs de téléphonie (Fig. 1.1). La croissance de l'activité a brusquement changé suite à l'inflation du marché.
 \item
-  La saisonnalité
+  Le nombre de minutes consommées\footnote{Données simulées} par jour en 2021 par l'ensemble des clients ayant passé un appel vocal (Fig. 1.2). La consommation baisse les jours week-ends, suite du fait de l'arrêt des activités économiques.
 \item
-  Le bruit
+  Le nombre de Terabyte consommé par l'ensemble des clients ayant naviguer sur internet (Fig. 1.3). La croissance est exponentielle, favorisée plus par l'augmentation d'une part du nombre des smartphones et de la baisse du prix de service internet mobile sur le marché congolais.
+\item
+  Le nombre de clients actifs sur une periode de 90 jours de l'operateur Airtel (Fig. 1.4).
+\item
+  On simule une marche aléatoire avec les fonctions R \emph{cumsum()} et \emph{rnorm()} (Fig. 1.6).
 \end{itemize}
+
+\begin{verbatim}
+## Warning in title(main = main, xlab = xlab, ylab = ylab, ...): conversion
+## failure on 's4 : Nombre d’abonnés Airtel' in 'mbcsToSbcs': dot substituted for
+## <e2>
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in title(main = main, xlab = xlab, ylab = ylab, ...): conversion
+## failure on 's4 : Nombre d’abonnés Airtel' in 'mbcsToSbcs': dot substituted for
+## <80>
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in title(main = main, xlab = xlab, ylab = ylab, ...): conversion
+## failure on 's4 : Nombre d’abonnés Airtel' in 'mbcsToSbcs': dot substituted for
+## <99>
+\end{verbatim}
+
+\includegraphics{_main_files/figure-latex/exemple-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{oma =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\AttributeTok{mar =} \FunctionTok{c}\NormalTok{(}\FloatTok{2.5}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{cex.main =} \FloatTok{0.8}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{0.7}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(s4, }\AttributeTok{col =} \StringTok{"green3"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{""}\NormalTok{, }\AttributeTok{main =} \StringTok{"s4 : Nombre d’abonnés Airtel"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in title(main = main, xlab = xlab, ylab = ylab, ...): conversion
+## failure on 's4 : Nombre d’abonnés Airtel' in 'mbcsToSbcs': dot substituted for
+## <e2>
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in title(main = main, xlab = xlab, ylab = ylab, ...): conversion
+## failure on 's4 : Nombre d’abonnés Airtel' in 'mbcsToSbcs': dot substituted for
+## <80>
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in title(main = main, xlab = xlab, ylab = ylab, ...): conversion
+## failure on 's4 : Nombre d’abonnés Airtel' in 'mbcsToSbcs': dot substituted for
+## <99>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(s6, }\AttributeTok{col =} \StringTok{"grey"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{""}\NormalTok{, }\AttributeTok{main =} \StringTok{"s6 : Marche aléatoire"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-1-1.pdf}
 
 \hypertarget{statistiques-descriptives-usuelles}{%
 \section{Statistiques descriptives usuelles}\label{statistiques-descriptives-usuelles}}
 
-\hypertarget{les-statistiques-des-positions}{%
-\subsection{Les statistiques des positions}\label{les-statistiques-des-positions}}
+Soit \(x_t\) une série temporelle avec \(t \in T\),
+
+\hypertarget{les-statistiques-de-tendance-centrale}{%
+\subsection{Les statistiques de tendance centrale}\label{les-statistiques-de-tendance-centrale}}
 
 \begin{itemize}
+\tightlist
 \item
-  La moyenne,
-\item
-  La mediane
+  La moyenne empirique
 \end{itemize}
+
+La moyenne empirique de la série est donnée par :
+\[\overline{x} = \frac{1}{n} \sum_{t=1}^{n} x_{t}\]
 
 \hypertarget{les-statistiques-de-dispersion}{%
 \subsection{Les statistiques de dispersion}\label{les-statistiques-de-dispersion}}
 
 \begin{itemize}
+\tightlist
 \item
-  La variance
-\item
-  L'ecart type
+  La variance empirique
 \end{itemize}
+
+La variance empirique est donnée par :
+\[\sigma^2 = \frac{1}{n} \sum_{t=1}^{n} (x_t - \overline{x})^2 \]
+
+L'ecart-type est definit par la racine carrée de la variance empirique : \(\sigma\).
+
+\begin{itemize}
+\tightlist
+\item
+  Le coefficient de variation
+\end{itemize}
+
+Le coefficient de variation est donné par :
+\[cv = \frac{\sigma}{\overline{x}}\]
+Permet de determiner l'homogénéité ou la dispersion et est exprimé en pourcentage.
+
+\begin{itemize}
+\tightlist
+\item
+  Pour \(cv<15%
+  \), on dit que la série est homogène.
+\item
+  Pour \(cv>15%
+  \), on dit que les valeurs de la série sont relativement dispersées.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(s1)}\SpecialCharTok{/}\FunctionTok{mean}\NormalTok{(s1)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{, }\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 10.23
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(s2)}\SpecialCharTok{/}\FunctionTok{mean}\NormalTok{(s2)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{, }\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 10.67
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(s3)}\SpecialCharTok{/}\FunctionTok{mean}\NormalTok{(s3)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{, }\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 105.46
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{round}\NormalTok{(}\FunctionTok{sd}\NormalTok{(s4)}\SpecialCharTok{/}\FunctionTok{mean}\NormalTok{(s4)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{, }\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 21.47
+\end{verbatim}
+
+Ainsi, on peut observer qu'il y a de forte dispersion avec la \(s3\) et \(s4\) contrairement aux observations de série \(s1\) et \(s2\) qui elles sont homogènes.
+
+\hypertarget{statistiques-de-duxe9pendance}{%
+\subsection{Statistiques de dépendance}\label{statistiques-de-duxe9pendance}}
+
+Celles qui renseignent sur la dépendance entre les observations de la série \(x_t\) :
+
+\begin{itemize}
+\tightlist
+\item
+  L'auto\_covariance
+\end{itemize}
+
+L'auto-covariance d'ordre \(h\) de la série est donnée par :
+\[\hat\sigma(h) = \frac{1}{n-h} \sum_{t=1}^{n-h} (x_{t} - \overline{x}) (x_{t+h} - \overline{x})\]
+
+Avec \(h \in N^*\) et \(h < n\). Dans le cas où \(h=0\), c'est-à-dire \(\hat\sigma(0)\), on a la variance empirique \(\sigma^2\).
+
+\begin{itemize}
+\tightlist
+\item
+  L'auto-correlation
+\end{itemize}
+
+L'auto-correlation de la série est donnée par :
+\[\hat\gamma(h) = \frac{\hat\sigma(h)}{\hat\sigma(0)}\]
 
 \hypertarget{les-statistiques-des-formes}{%
 \subsection{Les statistiques des formes}\label{les-statistiques-des-formes}}
 
+La loi normale se caractérise par un coefficient d'asymétrie et un coefficient d'aplatissement nuls. Ainsi les calculs de ces coefficients peuvent nous aider à avoir une idée sur la normalité.
+
 \begin{itemize}
+\tightlist
 \item
   Les coefficients d'aplatissement
+\end{itemize}
+
+Le coefficient d'aplatissemnt (ou Kurtosis) permet de mesurer l'aplatissement de la distribution de la série. On s'en sert aussi pour vérifier si une distribution est normale. Le coefficient est donné par :
+\[P = \frac{n(n+1)}{(n-1)(n-2)(n-3)} \sum_{t=1}^n \left( \frac{x_t - \overline{x}}{\sigma} \right)^4 - \frac{3(n-1)^2}{(n-2)(n-3)} \]
+
+ou
+\[K = \frac{1}{n\sigma^4} \sum_{t=1}^n (x_t - \overline{x})^4 \]
+
+Pour :
+- Si \(K=3\), la distribution est normale,
+- Si \(K>3\), la distribution est plus applatie, c'est-à-dire, une distribution relativement hétérogène, avec beaucoup de valeurs éloignées de la moyenne.
+- Si \(K<3\), la distribution est moins applatie, c'est-à-dire, il y a peu de variations dans les valeurs observées, une distribution relativement homogène, avec beaucoup de valeurs égales ou proches de la moyenne.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(moments)}
+\FunctionTok{kurtosis}\NormalTok{(s1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2.665041
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{kurtosis}\NormalTok{(s2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2.419901
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{kurtosis}\NormalTok{(s3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2.753559
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{kurtosis}\NormalTok{(s4)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.619768
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{kurtosis}\NormalTok{(s6)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2.990772
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
 \item
   Le coefficients d'asymétrie
 \end{itemize}
 
-\hypertarget{performances-dune-suxe9rie-temporelle}{%
-\section{Performances d'une série temporelle}\label{performances-dune-suxe9rie-temporelle}}
+Le coefficient d'asymetrie (de Fisher) est donner par :
+\[A = \frac{n}{(n-1)(n-2)} \sum_{t=1}^n \left( \frac{x_t - \overline{x}}{\sigma} \right) ^3\]
+
+ou
+\[F = \frac{1}{n\sigma^3} \sum_{t=1}^n (x_t - \mu)^3\]
+
+L'interprétation de ces coefficients est directe :
 
 \begin{itemize}
+\tightlist
 \item
-  La performance Year-to-date
+  Si le coefficient est nul, la distribution est symétrique
 \item
-  La performance Month-to-date
+  Si le coefficient est négatif, la distribution est déformée à gauche de la médiane (sur-représentation de valeurs faibles, à gauche)
 \item
-  La performance Quater-to-date
-\item
-  La performance Week-to-date
+  Si le coefficient est positif, la distribution est déformée à droite de la médiane (sur-représentation de valeurs fortes, à droite)
 \end{itemize}
 
-\hypertarget{description-graphique}{%
-\section{Description graphique}\label{description-graphique}}
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{skewness}\NormalTok{(s1)}
+\end{Highlighting}
+\end{Shaded}
 
-\hypertarget{le-chronogramme-time-plot}{%
-\subsection{Le chronogramme (time plot)}\label{le-chronogramme-time-plot}}
+\begin{verbatim}
+## [1] 0.307306
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{skewness}\NormalTok{(s2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] -0.4777813
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{skewness}\NormalTok{(s3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.035407
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{skewness}\NormalTok{(s4)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.25069
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{skewness}\NormalTok{(s6)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] -0.8200721
+\end{verbatim}
+
+\hypertarget{repruxe9sentation-graphique}{%
+\section{Représentation graphique}\label{repruxe9sentation-graphique}}
+
+\hypertarget{le-chronogramme}{%
+\subsection{Le chronogramme}\label{le-chronogramme}}
+
+Le chronogramme (ou time plot) est la représentation graphique d'une série temporelle. Les figures de l'exemple sont des chronogrammes. Sous R on peut utiliser d'autres paramètres pour ajouter les éléments dans les différentes figures.
 
 \hypertarget{lhistogramme}{%
 \subsection{L'histogramme}\label{lhistogramme}}
 
-\hypertarget{le-diagramme-retarduxe9-lagplot}{%
-\subsection{Le diagramme retardé (lagplot)}\label{le-diagramme-retarduxe9-lagplot}}
+La représentation qui permet d'avoir une idée sur la distribution des valeurs de la série \(x_t\).
 
-\hypertarget{le-boxplot}{%
-\subsection{Le boxplot}\label{le-boxplot}}
+\begin{verbatim}
+## Warning in plot.window(xlim, ylim, "", ...): "min" is not a graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in title(main = main, sub = sub, xlab = xlab, ylab = ylab, ...): "min"
+## is not a graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in axis(1, ...): "min" is not a graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in axis(2, at = yt, ...): "min" is not a graphical parameter
+\end{verbatim}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\hypertarget{le-diagramme-retarduxe9}{%
+\subsection{Le diagramme retardé}\label{le-diagramme-retarduxe9}}
+
+Le diagramme retardé (ou Lagplot) est une représentation qui permet de comprendre la dépendance des observations de la série \(x_t\) obtenu avec la fonction \emph{lagplot()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{lag.plot}\NormalTok{(s1, }\DecValTok{4}\NormalTok{, }\AttributeTok{do.lines =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{lag.plot}\NormalTok{(s2, }\DecValTok{4}\NormalTok{, }\AttributeTok{do.lines =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-6-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{lag.plot}\NormalTok{(s3, }\DecValTok{4}\NormalTok{, }\AttributeTok{do.lines =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-6-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{lag.plot}\NormalTok{(s4, }\DecValTok{4}\NormalTok{, }\AttributeTok{do.lines =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-6-4.pdf}
+
+\hypertarget{la-bouxeete-uxe0-moustache}{%
+\subsection{La boîte à moustache}\label{la-bouxeete-uxe0-moustache}}
+
+La boîte à moustache (ou boxplot) est une représentation qui permet de repérer les valeurs atypiques de la série \(x_t\). Elle permet aussi d'avoir une idée sur la symetrie de la distribution quoique cette symetrie n'affirme pas la normalité. La boite est symetrique lorsque la mediane se situe au milieu de la boîte à moustache et qu'il y a symetrie des moustaches.
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-7-1.pdf}
 
 \hypertarget{le-month-plot}{%
 \subsection{Le month plot}\label{le-month-plot}}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{oma =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\AttributeTok{mar =} \FunctionTok{c}\NormalTok{(}\FloatTok{2.5}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{cex.main =} \FloatTok{0.8}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{0.7}\NormalTok{)}
+\FunctionTok{monthplot}\NormalTok{(s1)}
+\FunctionTok{monthplot}\NormalTok{(s2)}
+\FunctionTok{monthplot}\NormalTok{(s3)}
+\FunctionTok{monthplot}\NormalTok{(s4)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\hypertarget{structure-ou-caracteristiques}{%
+\section{Structure ou caracteristiques}\label{structure-ou-caracteristiques}}
+
+Une série temporelle \(x_t\) est caractérisée par une tendance, une saisonnalité et résidus.
+
+\hypertarget{la-tendance}{%
+\subsection{La tendance}\label{la-tendance}}
+
+Une tendance (ou trend) est l'orientation à la hausse ou à la baisse des valeurs observées d'une série temporelle sur une periode assez longue. On note par \(m_t\). Une tendance est soit :
+
+\begin{itemize}
+\tightlist
+\item
+  locale ou globale :
+\item
+  linéaire ou non linéaire :
+\end{itemize}
+
+\hypertarget{la-saisonnalituxe9}{%
+\subsection{La saisonnalité}\label{la-saisonnalituxe9}}
+
+La saisonnalité permet de détecter les éléments repetitifs sur les observations d'une série après une période. La répétition peut etre mensuelle ou hebdomadaire. On note par \(s_t\) la composante saisonnière d'une série.
+
+\hypertarget{erreur-le-bruit}{%
+\subsection{Erreur (Le bruit)}\label{erreur-le-bruit}}
+
+Les 3 composants ci-dessus permet de decomposer la série \(x_t\) à un modèle additif :
+\[x_t = m_t+s_t+u_t\]
+
+avec \(E(u_t)=0\), ou soit à un modèle multiplicatif :
+
+\[x_t = m_ts_tu_t\]
+
+avec \(E(u_t)=1\).
+
+Avec le logiciel R, on peut décomposer la série avec la fonction \emph{decompose()}.
+
+Pour la série \(s1\) on a :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m1 }\OtherTok{=} \FunctionTok{decompose}\NormalTok{(s1, }\AttributeTok{type =} \StringTok{"additive"}\NormalTok{)}
+
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{oma =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\AttributeTok{mar =} \FunctionTok{c}\NormalTok{(}\FloatTok{2.5}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{cex.main =} \FloatTok{0.8}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{0.7}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(m1}\SpecialCharTok{$}\NormalTok{seasonal, }\AttributeTok{col =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Saisonnalité"}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(m1}\SpecialCharTok{$}\NormalTok{trend, }\AttributeTok{col =} \StringTok{"orange"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Tendance"}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(m1}\SpecialCharTok{$}\NormalTok{random, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Random"}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(m1}\SpecialCharTok{$}\NormalTok{x, }\AttributeTok{col =} \StringTok{"black"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Valeur"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+Pour la série \(s3\) on a :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m3 }\OtherTok{=} \FunctionTok{decompose}\NormalTok{(s3, }\AttributeTok{type =} \StringTok{"multiplicative"}\NormalTok{)}
+
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{oma =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\AttributeTok{mar =} \FunctionTok{c}\NormalTok{(}\FloatTok{2.5}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{cex.main =} \FloatTok{0.8}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{0.7}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(m3}\SpecialCharTok{$}\NormalTok{seasonal, }\AttributeTok{col =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Saisonnalité"}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(m3}\SpecialCharTok{$}\NormalTok{trend, }\AttributeTok{col =} \StringTok{"orange"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Tendance"}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(m3}\SpecialCharTok{$}\NormalTok{random, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Random"}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(m3}\SpecialCharTok{$}\NormalTok{x, }\AttributeTok{col =} \StringTok{"black"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Valeur"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+Pour la série \(s4\) on a :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m4 }\OtherTok{=} \FunctionTok{decompose}\NormalTok{(s4, }\AttributeTok{type =} \StringTok{"additive"}\NormalTok{)}
+
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{oma =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\AttributeTok{mar =} \FunctionTok{c}\NormalTok{(}\FloatTok{2.5}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{cex.main =} \FloatTok{0.8}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{0.7}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(m4}\SpecialCharTok{$}\NormalTok{seasonal, }\AttributeTok{col =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Saisonnalité"}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(m4}\SpecialCharTok{$}\NormalTok{trend, }\AttributeTok{col =} \StringTok{"orange"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Tendance"}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(m4}\SpecialCharTok{$}\NormalTok{random, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Random"}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(m4}\SpecialCharTok{$}\NormalTok{x, }\AttributeTok{col =} \StringTok{"black"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Valeur"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+\hypertarget{etude-de-la-normalituxe9}{%
+\section{Etude de la normalité}\label{etude-de-la-normalituxe9}}
+
+\hypertarget{le-diagramme-quantile-quantile}{%
+\subsection{Le diagramme Quantile-Quantile}\label{le-diagramme-quantile-quantile}}
+
+Le diagramme Quantile-Quantile (ou QQ-Plot) est une représentation d'évaluer la pertinence de l'ajustement d'une distribution donnée à un modèle théorique. De ce fait, elle permet aussi de reconnaître un bruit blanc.
+
+Plus les points se rapprochent de la droite, plus la distribution empirique est dite normale.
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+Interprétation :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{oma =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\AttributeTok{mar =} \FunctionTok{c}\NormalTok{(}\FloatTok{2.5}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{cex.main =} \FloatTok{0.8}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{0.7}\NormalTok{)}
+
+\FunctionTok{qqnorm}\NormalTok{(s4)}
+\FunctionTok{qqline}\NormalTok{(s4, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{)}
+
+\FunctionTok{qqnorm}\NormalTok{(s6)}
+\FunctionTok{qqline}\NormalTok{(s6, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-13-1.pdf}
+
+\hypertarget{test-de-normalituxe9}{%
+\subsection{Test de normalité}\label{test-de-normalituxe9}}
+
+\hypertarget{test-de-shapiro-wilk}{%
+\subsubsection{Test de Shapiro-Wilk}\label{test-de-shapiro-wilk}}
+
+Il est appliquable pour des échantillons allant jusqu'à 50 valeurs.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(s1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  s1
+## W = 0.98342, p-value = 0.1267
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(s2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  s2
+## W = 0.95935, p-value = 2.185e-06
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(s3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  s3
+## W = 0.81534, p-value = 3.025e-09
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(s4)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  s4
+## W = 0.90233, p-value = 7.706e-05
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(s6)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  s6
+## W = 0.92795, p-value = 2.001e-09
+\end{verbatim}
+
+A \(n=30\) \emph{(ddl)}, \(W_{0.05}\) vaut \(0.927\). On a ce qui suit :
+
+\begin{itemize}
+\item
+  Pour \(s1\), \(W_{obs} > W_{0,05}\), avec le \emph{p-value} est superieur à \(0.05\), l'hypothèse de normalité est donc tolérée. C'est-à-dire les données suivent une distribution normale.
+\item
+  Pour \(s2\), \(W_{obs} > W_{0,05}\), avec le \emph{p-value} est inférieur à \(0.05\), \ldots..
+\item
+  Pour \(s3\) et \(s4\), \(W_{obs} < W_{0,05}\), avec les \emph{p-value} toutes inférieures à \(0.05\), l'hypothse de normalité est donc rejetée. C'est-à-dire les données ne suivent pas une distribution normale.
+\end{itemize}
+
+\hypertarget{test-de-kolmogorov-smirnov}{%
+\subsubsection{Test de Kolmogorov-Smirnov}\label{test-de-kolmogorov-smirnov}}
+
+Le test de Kolmogorov-Smirnov permet de tester l'ajustement des données x à n'importe quelle loi, dont la loi normale. Il est intéressant d'opter pour ce test plutôt que celui de Shapiro-Wilk en cas de très grands échantillons.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Test de normalité de Kolmogorov S.}
+\FunctionTok{ks.test}\NormalTok{(s1, }\AttributeTok{y =} \StringTok{"pnorm"}\NormalTok{, }\FunctionTok{mean}\NormalTok{(s1), }\FunctionTok{sd}\NormalTok{(s1))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in ks.test.default(s1, y = "pnorm", mean(s1), sd(s1)): ties should not
+## be present for the Kolmogorov-Smirnov test
+\end{verbatim}
+
+\begin{verbatim}
+## 
+##  Asymptotic one-sample Kolmogorov-Smirnov test
+## 
+## data:  s1
+## D = 0.092237, p-value = 0.234
+## alternative hypothesis: two-sided
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ks.test}\NormalTok{(s2, }\AttributeTok{y =} \StringTok{"pnorm"}\NormalTok{, }\FunctionTok{mean}\NormalTok{(s2), }\FunctionTok{sd}\NormalTok{(s2))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Asymptotic one-sample Kolmogorov-Smirnov test
+## 
+## data:  s2
+## D = 0.10765, p-value = 0.007001
+## alternative hypothesis: two-sided
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ks.test}\NormalTok{(s3, }\AttributeTok{y =} \StringTok{"pnorm"}\NormalTok{, }\FunctionTok{mean}\NormalTok{(s3), }\FunctionTok{sd}\NormalTok{(s3))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in ks.test.default(s3, y = "pnorm", mean(s3), sd(s3)): ties should not
+## be present for the Kolmogorov-Smirnov test
+\end{verbatim}
+
+\begin{verbatim}
+## 
+##  Asymptotic one-sample Kolmogorov-Smirnov test
+## 
+## data:  s3
+## D = 0.18943, p-value = 0.003133
+## alternative hypothesis: two-sided
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ks.test}\NormalTok{(s4, }\AttributeTok{y =} \StringTok{"pnorm"}\NormalTok{, }\FunctionTok{mean}\NormalTok{(s4), }\FunctionTok{sd}\NormalTok{(s4))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Exact one-sample Kolmogorov-Smirnov test
+## 
+## data:  s4
+## D = 0.13672, p-value = 0.1544
+## alternative hypothesis: two-sided
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ks.test}\NormalTok{(s6, }\AttributeTok{y =} \StringTok{"pnorm"}\NormalTok{, }\FunctionTok{mean}\NormalTok{(s6), }\FunctionTok{sd}\NormalTok{(s6))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Asymptotic one-sample Kolmogorov-Smirnov test
+## 
+## data:  s6
+## D = 0.14847, p-value = 5.078e-05
+## alternative hypothesis: two-sided
+\end{verbatim}
+
+Pour \(D_{0.05} = 0.240\), (pour n = 30) :
+
+\begin{itemize}
+\tightlist
+\item
+  Si \(D_{max} < D_{0.05}\), l'\(H_0\) est tolérée: la distribution empirique semble correspondre à une distribution normale.
+\item
+  Si \(D_{max} > D_{0.05}\), l'\(H_0\) est rejetée: la distribution empirique ne provient pas d'une distribution normale.
+\end{itemize}
+
+Ainsi, avec ce test, on tolère l'hypothèse \(H_0\), les distributions des séries semblent correspondre à une distribution normale.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Test de normalité}
+\FunctionTok{library}\NormalTok{(tseries)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Registered S3 method overwritten by 'quantmod':
+##   method            from
+##   as.zoo.data.frame zoo
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{jarque.bera.test}\NormalTok{(s1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Jarque Bera Test
+## 
+## data:  s1
+## X-squared = 2.5722, df = 2, p-value = 0.2763
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{jarque.bera.test}\NormalTok{(s2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Jarque Bera Test
+## 
+## data:  s2
+## X-squared = 12.704, df = 2, p-value = 0.001743
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{jarque.bera.test}\NormalTok{(s3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Jarque Bera Test
+## 
+## data:  s3
+## X-squared = 16.309, df = 2, p-value = 0.0002875
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{jarque.bera.test}\NormalTok{(s4)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Jarque Bera Test
+## 
+## data:  s4
+## X-squared = 5.9302, df = 2, p-value = 0.05156
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{jarque.bera.test}\NormalTok{(s6)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Jarque Bera Test
+## 
+## data:  s6
+## X-squared = 26.902, df = 2, p-value = 1.44e-06
+\end{verbatim}
+
+\hypertarget{test-dinduxe9pendance}{%
+\section{Test d'indépendance}\label{test-dinduxe9pendance}}
+
+On peut utiliser la fonction \emph{Box.test()} pour examiner l'hypothèse nulle d'indépendance dans une série temporelle donnée.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{Box.test}\NormalTok{(s1, }\AttributeTok{lag =} \DecValTok{1}\NormalTok{, }\AttributeTok{type =} \StringTok{"Ljung{-}Box"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Box-Ljung test
+## 
+## data:  s1
+## X-squared = 79.334, df = 1, p-value < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{Box.test}\NormalTok{(s1, }\AttributeTok{lag =} \DecValTok{2}\NormalTok{, }\AttributeTok{type =} \StringTok{"Ljung{-}Box"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Box-Ljung test
+## 
+## data:  s1
+## X-squared = 149.46, df = 2, p-value < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{Box.test}\NormalTok{(s1, }\AttributeTok{lag =} \DecValTok{3}\NormalTok{, }\AttributeTok{type =} \StringTok{"Ljung{-}Box"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Box-Ljung test
+## 
+## data:  s1
+## X-squared = 212.03, df = 3, p-value < 2.2e-16
+\end{verbatim}
+
+\hypertarget{performances-dune-suxe9rie-temporelle}{%
+\section{Performances d'une série temporelle}\label{performances-dune-suxe9rie-temporelle}}
+
+Dans les domaines de finance, de comptabilité ou de marketing opérationnel, les experts suivent au quotidien l'évolution de leurs activités en comparant à chaque fois les résultats d'une date (ou d'une période) par rapport à une date (ou une période) antérieure, par rapport aux résultats du marché global ou par rapport aux résultats de leurs concurrents directs. On parle là de concept de \emph{performance}.
+
+\hypertarget{la-performance-year-to-date}{%
+\subsection{La performance Year-to-date}\label{la-performance-year-to-date}}
+
+La performance \emph{Year-To-Date} conrespond au résultat cumulé commençant le premier jour de l'année civile ou de l'exercice en cours jusqu'à la date actuelle,
+\[YTD_x = \sum_{t=1}^{k} x_{t}\]
+
+\(x_1\) correspond à la valeur de la série au 1er janvier, et \(x_k\) à la valeur de la série à la date actuelle.
+
+\hypertarget{la-performance-month-to-date}{%
+\subsection{La performance Month-to-date}\label{la-performance-month-to-date}}
+
+La performance \emph{Month-To-Date} conrespond au résultat cumulé commençant le premier jour du mois en cours jusqu'à la date actuelle au cours du même mois,
+\[MTD_x = \sum_{t=1}^{k} x_{t}\]
+
+\(x_1\) correspond à la valeur de la série au 1er jour du mois, et \(x_k\) à la valeur de la série à la date actuelle au cours du même mois.
+
+\hypertarget{la-performance-quater-to-date}{%
+\subsection{La performance Quater-to-date}\label{la-performance-quater-to-date}}
+
+La performance \emph{Quater-To-Date} conrespond au résultat cumulé commençant le permier jour du trimestre jusqu'à la date actuelle au cours du même trimestre.
+\[QTD_x = \sum_{t=1}^{k} x_{t}\]
+
+\(x_1\) correspond à la valeur de la série au 1er jour du trimestre, et \(x_k\) à la valeur de la série à la date actuelle au cours du même trimestre.
+
+\hypertarget{la-performance-week-to-date}{%
+\subsection{La performance Week-to-date}\label{la-performance-week-to-date}}
+
+La performance \emph{Week-To-Date} conrespond au résultat cumulé commençant le permier jour de la semaine jusqu'à la date actuelle au cours de la même semaine.
+\[WTD_x = \sum_{t=1}^{k} x_{t}\]
+
+\(x_1\) correspond à la valeur de la série au 1er jour de la semaine, et \(x_k\) à la valeur de la série à la date actuelle au cours de la même semaine.
+
 \hypertarget{cross}{%
 \chapter{Modélisation}\label{cross}}
 
-Cross-references make it easier for your readers to find and link to elements in your book.
+\hypertarget{stationnarituxe9}{%
+\section{Stationnarité}\label{stationnarituxe9}}
+
+\hypertarget{definition-2.1.}{%
+\subsection{Definition 2.1.}\label{definition-2.1.}}
+
+xxxx
+
+\hypertarget{graph}{%
+\subsection{Graph}\label{graph}}
+
+La série est‐elle stationnaire?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(s1, }\AttributeTok{xlab =} \StringTok{"temps"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"valeur"}\NormalTok{, }\AttributeTok{col =} \StringTok{"blue"}\NormalTok{, }
+     \AttributeTok{main =} \StringTok{"Evolution de l\textquotesingle{}indice du coût de la construction"}\NormalTok{)}
+\FunctionTok{abline}\NormalTok{(}\AttributeTok{h =} \FunctionTok{mean}\NormalTok{(s1), }\AttributeTok{col =} \StringTok{"red"}\NormalTok{, }\AttributeTok{lty =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-18-1.pdf}
+
+On voit clairement sur le chronogramme de la série qu'elle ne pourrait pas être stationnaire : sa moyenne depend de l'instant auquel on se trouve et le niveau de la série ne fluctue pas autour d'une valeur quelconque.
+
+\hypertarget{test-de}{%
+\subsection{Test de}\label{test-de}}
+
+Test de stationnarité
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(aTSA)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'aTSA'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:tseries':
+## 
+##     adf.test, kpss.test, pp.test
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:graphics':
+## 
+##     identify
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{adf.test}\NormalTok{(s1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Augmented Dickey-Fuller Test 
+## alternative: stationary 
+##  
+## Type 1: no drift no trend 
+##      lag    ADF p.value
+## [1,]   0 -0.132   0.605
+## [2,]   1  0.256   0.716
+## [3,]   2  0.339   0.740
+## [4,]   3  0.301   0.729
+## [5,]   4  0.330   0.737
+## Type 2: with drift no trend 
+##      lag   ADF p.value
+## [1,]   0 -3.82   0.010
+## [2,]   1 -2.66   0.089
+## [3,]   2 -2.17   0.262
+## [4,]   3 -2.30   0.214
+## [5,]   4 -1.98   0.338
+## Type 3: with drift and trend 
+##      lag   ADF p.value
+## [1,]   0 -6.27  0.0100
+## [2,]   1 -4.24  0.0100
+## [3,]   2 -3.61  0.0354
+## [4,]   3 -3.96  0.0138
+## [5,]   4 -3.63  0.0332
+## ---- 
+## Note: in fact, p.value = 0.01 means p.value <= 0.01
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{adf.test}\NormalTok{(s2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Augmented Dickey-Fuller Test 
+## alternative: stationary 
+##  
+## Type 1: no drift no trend 
+##      lag     ADF p.value
+## [1,]   0 -0.0801   0.621
+## [2,]   1  0.1562   0.689
+## [3,]   2  0.3774   0.752
+## [4,]   3  0.6151   0.821
+## [5,]   4  0.6733   0.838
+## Type 2: with drift no trend 
+##      lag   ADF p.value
+## [1,]   0 -3.99  0.0100
+## [2,]   1 -3.06  0.0327
+## [3,]   2 -2.34  0.1940
+## [4,]   3 -2.27  0.2209
+## [5,]   4 -2.04  0.3109
+## Type 3: with drift and trend 
+##      lag   ADF p.value
+## [1,]   0 -7.78  0.0100
+## [2,]   1 -6.15  0.0100
+## [3,]   2 -4.58  0.0100
+## [4,]   3 -4.01  0.0100
+## [5,]   4 -3.64  0.0295
+## ---- 
+## Note: in fact, p.value = 0.01 means p.value <= 0.01
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{adf.test}\NormalTok{(s3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Augmented Dickey-Fuller Test 
+## alternative: stationary 
+##  
+## Type 1: no drift no trend 
+##      lag  ADF p.value
+## [1,]   0 5.41    0.99
+## [2,]   1 6.72    0.99
+## [3,]   2 6.28    0.99
+## [4,]   3 5.70    0.99
+## Type 2: with drift no trend 
+##      lag  ADF p.value
+## [1,]   0 3.25    0.99
+## [2,]   1 4.54    0.99
+## [3,]   2 4.76    0.99
+## [4,]   3 4.75    0.99
+## Type 3: with drift and trend 
+##      lag    ADF p.value
+## [1,]   0 -0.271    0.99
+## [2,]   1  0.257    0.99
+## [3,]   2  0.397    0.99
+## [4,]   3  0.481    0.99
+## ---- 
+## Note: in fact, p.value = 0.01 means p.value <= 0.01
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{adf.test}\NormalTok{(s4)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Augmented Dickey-Fuller Test 
+## alternative: stationary 
+##  
+## Type 1: no drift no trend 
+##      lag  ADF p.value
+## [1,]   0 3.03   0.990
+## [2,]   1 2.08   0.990
+## [3,]   2 1.62   0.972
+## [4,]   3 3.25   0.990
+## Type 2: with drift no trend 
+##      lag    ADF p.value
+## [1,]   0  1.368   0.990
+## [2,]   1  0.827   0.990
+## [3,]   2  0.518   0.985
+## [4,]   3 -0.113   0.941
+## Type 3: with drift and trend 
+##      lag   ADF p.value
+## [1,]   0 -2.98  0.1742
+## [2,]   1 -3.60  0.0403
+## [3,]   2 -4.61  0.0100
+## [4,]   3 -1.81  0.6464
+## ---- 
+## Note: in fact, p.value = 0.01 means p.value <= 0.01
+\end{verbatim}
+
+Au seul de 5\%, on observe par le résultat du test de Dickey-Fuller augmenté que cette série n'est pas stationnaire.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(caschrono)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: zoo
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'zoo'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     as.Date, as.Date.numeric
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(zoo)}
+
+\FunctionTok{acf}\NormalTok{(m1}\SpecialCharTok{$}\NormalTok{random, }\AttributeTok{na.action =}\NormalTok{ na.pass)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-20-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{Box.test.2}\NormalTok{(m1}\SpecialCharTok{$}\NormalTok{random, }\AttributeTok{nlag =} \FunctionTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{, }\DecValTok{6}\NormalTok{, }\DecValTok{9}\NormalTok{, }\DecValTok{12}\NormalTok{), }\AttributeTok{type =} \StringTok{"Ljung{-}Box"}\NormalTok{, }\AttributeTok{decim =} \DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Retard p-value
+## [1,]      3       0
+## [2,]      6       0
+## [3,]      9       0
+## [4,]     12       0
+\end{verbatim}
+
+Du résultat ci-dessus, la p-value \textgreater{} 0,05 indiquant que la distribution des données n'est pas significativement différente de la distribution normale. En d'autres termes, nous pouvons supposer que la normalité.
+
+fonction d'auto-corrélation
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{oma =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\AttributeTok{mar =} \FunctionTok{c}\NormalTok{(}\FloatTok{2.5}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{cex.main =} \FloatTok{0.8}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{0.7}\NormalTok{)}
+\FunctionTok{acf}\NormalTok{(s1, }\AttributeTok{lag.max =} \DecValTok{20}\NormalTok{)}
+\FunctionTok{acf}\NormalTok{(s2, }\AttributeTok{lag.max =} \DecValTok{20}\NormalTok{)}
+\FunctionTok{acf}\NormalTok{(s3, }\AttributeTok{lag.max =} \DecValTok{20}\NormalTok{)}
+\FunctionTok{acf}\NormalTok{(s4, }\AttributeTok{lag.max =} \DecValTok{20}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-21-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{oma =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\AttributeTok{mar =} \FunctionTok{c}\NormalTok{(}\FloatTok{2.5}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{cex.main =} \FloatTok{0.8}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{0.7}\NormalTok{)}
+\FunctionTok{pacf}\NormalTok{(s1, }\AttributeTok{lag.max =} \DecValTok{20}\NormalTok{)}
+\FunctionTok{pacf}\NormalTok{(s2, }\AttributeTok{lag.max =} \DecValTok{20}\NormalTok{)}
+\FunctionTok{pacf}\NormalTok{(s3, }\AttributeTok{lag.max =} \DecValTok{20}\NormalTok{)}
+\FunctionTok{pacf}\NormalTok{(s4, }\AttributeTok{lag.max =} \DecValTok{20}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-22-1.pdf}
 
 \hypertarget{moduxe8le-sans-variable-explicative}{%
 \section{Modèle sans variable explicative}\label{moduxe8le-sans-variable-explicative}}
-
-There are two steps to cross-reference any heading:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Label the heading: \texttt{\#\ Hello\ world\ \{\#nice-label\}}.
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Leave the label off if you like the automated heading generated based on your heading title: for example, \texttt{\#\ Hello\ world} = \texttt{\#\ Hello\ world\ \{\#hello-world\}}.
-  \item
-    To label an un-numbered heading, use: \texttt{\#\ Hello\ world\ \{-\#nice-label\}} or \texttt{\{\#\ Hello\ world\ .unnumbered\}}.
-  \end{itemize}
-\item
-  Next, reference the labeled heading anywhere in the text using \texttt{\textbackslash{}@ref(nice-label)}; for example, please see Chapter \ref{cross}.
-
-  \begin{itemize}
-  \tightlist
-  \item
-    If you prefer text as the link instead of a numbered reference use: \protect\hyperlink{cross}{any text you want can go here}.
-  \end{itemize}
-\end{enumerate}
-
-\hypertarget{moduxe8le-avec-variables-explicatives}{%
-\section{Modèle avec variables explicatives}\label{moduxe8le-avec-variables-explicatives}}
-
-Figures and tables \emph{with captions} can also be cross-referenced from elsewhere in your book using \texttt{\textbackslash{}@ref(fig:chunk-label)} and \texttt{\textbackslash{}@ref(tab:chunk-label)}, respectively.
-
-See Figure \ref{fig:nice-fig}.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{par}\NormalTok{(}\AttributeTok{mar =} \FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{, }\DecValTok{4}\NormalTok{, .}\DecValTok{1}\NormalTok{, .}\DecValTok{1}\NormalTok{))}
-\FunctionTok{plot}\NormalTok{(pressure, }\AttributeTok{type =} \StringTok{\textquotesingle{}b\textquotesingle{}}\NormalTok{, }\AttributeTok{pch =} \DecValTok{19}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{_main_files/figure-latex/nice-fig-1} 
-
-}
-
-\caption{Here is a nice figure!}\label{fig:nice-fig}
-\end{figure}
-
-Don't miss Table \ref{tab:nice-tab}.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(}
-  \FunctionTok{head}\NormalTok{(pressure, }\DecValTok{10}\NormalTok{), }\AttributeTok{caption =} \StringTok{\textquotesingle{}Here is a nice table!\textquotesingle{}}\NormalTok{,}
-  \AttributeTok{booktabs =} \ConstantTok{TRUE}
-\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{table}
-
-\caption{\label{tab:nice-tab}Here is a nice table!}
-\centering
-\begin{tabular}[t]{rr}
-\toprule
-temperature & pressure\\
-\midrule
-0 & 0.0002\\
-20 & 0.0012\\
-40 & 0.0060\\
-60 & 0.0300\\
-80 & 0.0900\\
-\addlinespace
-100 & 0.2700\\
-120 & 0.7500\\
-140 & 1.8500\\
-160 & 4.2000\\
-180 & 8.8000\\
-\bottomrule
-\end{tabular}
-\end{table}
 
 \hypertarget{moduxe8le-statique}{%
 \section{Modèle statique}\label{moduxe8le-statique}}

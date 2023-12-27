@@ -1,17 +1,33 @@
 h1:description Description
-h2:définition Définition
+h2:définitions Définitions
+h3:définition-1-série-temporelle Définition 1 : Série temporelle
 h2:notation Notation
+h3:définition-2-le-bruit-blanc Définition 2 : Le bruit blanc
 h2:exemple Exemple
-h2:structure-ou-caracteristiques Structure ou caracteristiques
 h2:statistiques-descriptives-usuelles Statistiques descriptives usuelles
-h3:les-statistiques-des-positions Les statistiques des positions
+h3:les-statistiques-de-tendance-centrale Les statistiques de tendance centrale
 h3:les-statistiques-de-dispersion Les statistiques de dispersion
+h3:statistiques-de-dépendance Statistiques de dépendance
 h3:les-statistiques-des-formes Les statistiques des formes
-h2:performances-dune-série-temporelle Performances d’une série temporelle
-h2:description-graphique Description graphique
-h3:le-chronogramme-time-plot Le chronogramme (time plot)
+h2:représentation-graphique Représentation graphique
+h3:le-chronogramme Le chronogramme
 h3:lhistogramme L’histogramme
-h3:le-diagramme-retardé-lagplot Le diagramme retardé (lagplot)
-h3:le-boxplot Le boxplot
+h3:le-diagramme-retardé Le diagramme retardé
+h3:la-boîte-à-moustache La boîte à moustache
 h3:le-month-plot Le month plot
+h2:structure-ou-caracteristiques Structure ou caracteristiques
+h3:la-tendance La tendance
+h3:la-saisonnalité La saisonnalité
+h3:erreur-le-bruit Erreur (Le bruit)
+h2:etude-de-la-normalité Etude de la normalité
+h3:le-diagramme-quantile-quantile Le diagramme Quantile-Quantile
+h3:test-de-normalité Test de normalité
+h4:test-de-shapiro-wilk Test de Shapiro-Wilk
+h4:test-de-kolmogorov-smirnov Test de Kolmogorov-Smirnov
+h2:test-dindépendance Test d’indépendance
+h2:performances-dune-série-temporelle Performances d’une série temporelle
+h3:la-performance-year-to-date La performance Year-to-date
+h3:la-performance-month-to-date La performance Month-to-date
+h3:la-performance-quater-to-date La performance Quater-to-date
+h3:la-performance-week-to-date La performance Week-to-date
 
